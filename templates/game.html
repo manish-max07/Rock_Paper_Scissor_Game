@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh; 
+            display: flex;
+            justify-content: center; 
+            align-items: center; 
+            background-image: url("/static/Home.png");
+            background-size: cover; /* Cover the entire viewport */
+            background-position: center;
+        }
+
+        .container {
+            width: 810px;
+            height: 535px;
+            text-align: center;
+            
+            border-radius: 10px; 
+            
+        }
+    </style>
+    <style>
+        #game-over {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hand Game</h1>
+        <img src="{{ url_for('video_feed') }}" width="800">
+        <div id="game-control">
+            <button id="start-btn" onclick="startGame()" style="background-color: #667EEA; height: 40px; width: 160px; border-radius: 20px;">Start Game</button>
+        </div>
+    </div>
+    <div id="game-over">
+        <h2 id="winner"></h2>
+        <button id="replay-btn" onclick="replay()" style="background-color: #667EEA; height: 40px; width: 160px; border-radius: 20px;">Replay</button>
+    </div>
+    <script>
+        let gameOver = false;
+
+        function startGame() {
+            fetch('/start_game', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Game started');
+                    
+                    gameOver = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function replay() {
+            window.location.href = '/';
+        }
+
+        function checkGameOver() {
+            if (!gameOver) {
+                fetch('/check_game_over')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.gameOver) {
+                        gameOver = true;
+                        document.getElementById('winner').innerText = data.winner + ' won!';
+                        document.getElementById('game-over').style.display = 'block';
+                        document.getElementById('start-btn').innerText = 'Replay';
+                        document.getElementById('start-btn').onclick = replay;
+                        document.getElementById('start-btn').style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        }
+
+        setInterval(checkGameOver, 1000);
+    </script>
+</body>
+</html>

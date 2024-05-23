@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors Game - Home</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh; 
+            display: flex;
+            justify-content: center; 
+            align-items: center; 
+            background-image: url('/static/Home.png');
+            background-size: cover; /* Cover the entire viewport */
+            background-position: center;
+        }
+
+        .container {
+            width: 500px;
+            height: 250px;
+            text-align: center;
+            background-color: white; 
+            border-radius: 10px; 
+            padding: 20px;
+        }
+    </style>
+</head>
+<body >
+    <div class="container">
+    <h1>Rock , Paper & Scssiors Game</h1>
+    <form action="{{ url_for('setup_game') }}" method="post">
+        <label for="userName"><b>Enter your name:</b></label>
+        <input type="text" id="userName" name="userName" required><br><br>
+        <label for="maxScore"><b>Enter max score to win:</b></label>
+        <input type="number" id="maxScore" name="maxScore" required><br><br>
+        <button type="submit"  style="background-color: #667EEA; height: 40px; width: 160px; border-radius: 20px;">Go to Game</button>
+    </form>
+</div>
+</body>
+</html>
