@@ -4,6 +4,8 @@ import cvzone
 from cvzone.HandTrackingModule import HandDetector
 import time
 import random
+import logging
+
 
 app = Flask(__name__)
 
@@ -24,11 +26,26 @@ winner = ""
 def generate_frames():
     global timer, stateResult, startGame, scores, initialTime, maxScore, userName, gameOver, winner
     while True:
-        imgBG = cv2.imread("static/BG.png")
-        success, img = cap.read()
+        try:
+            # Read frame from camera
+            success, img = cap.read()
+            if not success:
+                logging.error("Failed to read from video capture")
+                continue
 
-        imgScaled = cv2.resize(img, (0, 0), None, 0.875, 0.875)
-        imgScaled = imgScaled[:, 80:480]
+            # Resize the image (handle empty frame case)
+            if img is not None and img.size > 0:
+                imgScaled = cv2.resize(img, (0, 0), None, 0.875, 0.875)
+                imgScaled = imgScaled[:, 80:480]
+            else:
+                logging.error("Captured frame is empty")
+                continue
+
+            # Placeholder for background image (replace with actual path)
+            imgBG = cv2.imread("static/BG.png")
+            if imgBG is None:
+                logging.error("Failed to load background image")
+                continue
 
         # Find Hands
         hands, img = detector.findHands(imgScaled)  # with draw
@@ -87,10 +104,15 @@ def generate_frames():
             cv2.putText(imgBG, f"Game Over! {winner} won!", (250, 400), cv2.FONT_HERSHEY_PLAIN, 5, (255, 0, 0), 5)
 
         ret, buffer = cv2.imencode('.jpg', imgBG)
+            if not ret:
+                logging.error("Failed to encode image")
+                continue
         frame = buffer.tobytes()
 
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+    except Exception as e:
+            logging.error(f"Error in generate_frames: {e}")
 
 @app.route('/')
 def home():
