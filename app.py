@@ -24,7 +24,7 @@ winner = ""
 def generate_frames():
     global timer, stateResult, startGame, scores, initialTime, maxScore, userName, gameOver, winner
     while True:
-        imgBG = cv2.imread("BG.png")
+        imgBG = cv2.imread("static/BG.png")
         success, img = cap.read()
 
         imgScaled = cv2.resize(img, (0, 0), None, 0.875, 0.875)
@@ -54,7 +54,7 @@ def generate_frames():
                             playerMove = 3
 
                         randomNumber = random.randint(1, 3)
-                        imgAI = cv2.imread(f'{randomNumber}.png', cv2.IMREAD_UNCHANGED)
+                        imgAI = cv2.imread(f'static/{randomNumber}.png', cv2.IMREAD_UNCHANGED)
                         imgBG = cvzone.overlayPNG(imgBG, imgAI, (149, 310))
 
                         # Player Wins
